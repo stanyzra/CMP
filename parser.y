@@ -1,5 +1,9 @@
 %{
 #include <stdio.h>
+#include "uthash.h"
+#include <string.h>
+#include <stdlib.h>
+
 extern int yylex();
 void yyerror(const char *s);
 %}
@@ -17,16 +21,16 @@ program:
 
 statement:
       expr SEMI
-    | ID EQUALS expr SEMI
+    | type ID '=' expr SEMI
     ;
 
 expr:
       expr '+' expr
-      expr '-' expr
-      expr '*' expr
-      expr '/' expr
-      '(' expr ')'
-      '-' expr %prec MINUS_SIGNAL
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | '(' expr ')'
+    | '-' expr %prec MINUS_SIGNAL
     ;
 
 value:
@@ -39,6 +43,12 @@ operator:
     | MINUS
     | TIMES
     | DIVIDE
+
+type:
+      INT
+    | FLOAT   
+    | STRING   
+    | CHAR  
 
 %%
 

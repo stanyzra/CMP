@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.log": "log",
+        "*.csv": "csv",
+        "typeinfo": "c"
+    }
+}

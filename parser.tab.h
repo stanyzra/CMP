@@ -70,7 +70,8 @@ extern int yydebug;
     LPAREN = 271,                  /* LPAREN  */
     RPAREN = 272,                  /* RPAREN  */
     SEMI = 273,                    /* SEMI  */
-    EQUALS = 274                   /* EQUALS  */
+    EQUALS = 274,                  /* EQUALS  */
+    MINUS_SIGNAL = 275             /* MINUS_SIGNAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
