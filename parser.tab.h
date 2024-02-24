@@ -54,31 +54,35 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    INT = 258,                     /* INT  */
-    FLOAT = 259,                   /* FLOAT  */
-    CHAR = 260,                    /* CHAR  */
-    STRING = 261,                  /* STRING  */
-    ID = 262,                      /* ID  */
-    INT_NUMBER = 263,              /* INT_NUMBER  */
-    FLOAT_NUMBER = 264,            /* FLOAT_NUMBER  */
-    STRING_VALUE = 265,            /* STRING_VALUE  */
-    CHAR_VALUE = 266,              /* CHAR_VALUE  */
-    PLUS = 267,                    /* PLUS  */
-    MINUS = 268,                   /* MINUS  */
-    TIMES = 269,                   /* TIMES  */
-    DIVIDE = 270,                  /* DIVIDE  */
-    LPAREN = 271,                  /* LPAREN  */
-    RPAREN = 272,                  /* RPAREN  */
-    SEMI = 273,                    /* SEMI  */
-    EQUALS = 274,                  /* EQUALS  */
-    MINUS_SIGNAL = 275             /* MINUS_SIGNAL  */
+    TOK_ID = 258,                  /* TOK_ID  */
+    TOK_INT_NUMBER = 259,          /* TOK_INT_NUMBER  */
+    TOK_FLOAT_NUMBER = 260,        /* TOK_FLOAT_NUMBER  */
+    TOK_STRING_VALUE = 261,        /* TOK_STRING_VALUE  */
+    TOK_CHAR_VALUE = 262,          /* TOK_CHAR_VALUE  */
+    TOK_INT = 263,                 /* TOK_INT  */
+    TOK_FLOAT = 264,               /* TOK_FLOAT  */
+    TOK_CHAR = 265,                /* TOK_CHAR  */
+    TOK_STRING = 266,              /* TOK_STRING  */
+    TOK_SEMI = 267,                /* TOK_SEMI  */
+    TOK_PRINT = 268,               /* TOK_PRINT  */
+    MINUS_SIGNAL = 269             /* MINUS_SIGNAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 14 "parser.y"
+
+    struct Var_Value var_val;
+    char id[64];
+
+#line 83 "parser.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

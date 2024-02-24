@@ -1,4 +1,5 @@
 %{
+// Example from Wikipedea
 #include "y.tab.h"
 %}
 

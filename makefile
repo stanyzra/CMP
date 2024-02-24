@@ -2,6 +2,7 @@ all: compiler
 
 # Compiler
 CPPC=gcc
+CFLAGS=-I./libs -lfl -lbsd
 
 # Lexer
 FLEX=flex
@@ -10,7 +11,7 @@ FLEX=flex
 BISON=bison
 
 compiler: lex.yy.c parser.tab.c
-	$(CPPC) lex.yy.c parser.tab.c -o compiler
+	$(CPPC) lex.yy.c parser.tab.c -o compiler $(CFLAGS)
 
 lex.yy.c: lex.l
 	$(FLEX) lex.l
@@ -19,4 +20,4 @@ parser.tab.c: parser.y
 	$(BISON) -d parser.y
 
 clean:
-	rm compiler lex.yy.c parser.tab.c parser.tab.h
+	rm -f compiler lex.yy.c parser.tab.c parser.tab.h

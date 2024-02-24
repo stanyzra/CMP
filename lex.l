@@ -1,6 +1,7 @@
 %{
-#include <stdio.h>
+#include "libs/structures.h"
 #include "parser.tab.h"
+#include <stdio.h>
 %}
 
 %option yylineno
@@ -9,30 +10,25 @@
 INT_NUMBER      [+-]?[0-9]+
 FLOAT_NUMBER    [+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+-]?[0-9]+)?
 STRING_VALUE    \"([^\"\\\n]*(\\.[^\"\\\n]*)*)\"
-CHAR_VALUE      '[^']'
+CHAR_VALUE      '([^'])'
 ID              [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
 
-"int"               { printf("TOKEN:INT\n"); return INT;}
-"float"             { printf("TOKEN:FLOAT\n"); return FLOAT;}
-"char"              { printf("TOKEN:CHAR\n"); return CHAR;}
-"string"            { printf("TOKEN:STRING\n"); return STRING;}
-{ID}                { printf("TOKEN:ID\n"); strcpy(yylval.id, yytext); return ID;}
-{INT_NUMBER}        { printf("TOKEN:INT_NUMBER\n"); yylval.int_number = atoi(yytext); return INT_NUMBER;}
-{FLOAT_NUMBER}      { printf("TOKEN:FLOAT_NUMBER\n"); yylval.float_number = atof(yytext); return FLOAT_NUMBER;}
-{STRING_VALUE}      { printf("TOKEN:STRING_VALUE\n"); strcpy(yylval.string_value, yytext); return STRING_VALUE;}
-{CHAR_VALUE}        { printf("TOKEN:CHAR_VALUE\n"); strcpy(yylval.char_value, yytext); return CHAR_VALUE;}
-";"                 { printf("TOKEN:SEMI\n"); return SEMI;}
-[ \t]+              { /* Ignorar espaços em branco */ }
-.                   { printf("TOKEN:MISMATCH\n"); return -1;}
+"int"                       { return TOK_INT;}
+"float"                     { return TOK_FLOAT;}
+"char"                      { return TOK_CHAR;}
+"string"                    { return TOK_STRING;}
+"print"                     { return TOK_PRINT;}
+{ID}                        { strcpy(yylval.id, yytext); return TOK_ID;}
+{INT_NUMBER}                { yylval.var_val.type = INT; yylval.var_val.value.intValue = atoi(yytext); return TOK_INT_NUMBER;}
+{FLOAT_NUMBER}              { yylval.var_val.type = FLOAT; yylval.var_val.value.floatValue = atof(yytext); return TOK_FLOAT_NUMBER;}
+{STRING_VALUE}              { yylval.var_val.type = STRING; strcpy(yylval.var_val.value.strValue, yytext); return TOK_STRING_VALUE;}
+{CHAR_VALUE}                {yylval.var_val.type = CHAR; char str[3]; strcpy(str, yytext); yylval.var_val.value.charValue = str[1]; return TOK_CHAR_VALUE;}
+";"                         { return TOK_SEMI;}
+[ \t]+                      {}
+\/\/.*                      {}
+\/\*(\*(\/)|[^*])*\*\/      {}
+.                           { return yytext[0];}
 
 %%
-
-/* int yywrap(){}
-
-int main(int argc, char **argv)
-{
-    yylex();
-    return 0;
-} */
