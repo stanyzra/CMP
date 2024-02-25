@@ -1,5 +1,5 @@
-import "classes/class1.c"
-import "classes/class2.c"
+// import "classes/class1.c"
+// import "classes/class2.c"
 
 class Test_Class1 {
     var_test_class1::int = 1;
@@ -36,9 +36,10 @@ proc procedure_test3()::int {
     return proc_var1 == proc_var2;
 }
 
-main()::int {
+main() {
     // testando atribuições
     int_test::int = 3;
+    int_test2::int = -3;
     float_test::float = 1.4;
     string_test::string = "string de teste";
     char_test::char = 't';

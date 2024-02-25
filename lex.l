@@ -1,7 +1,9 @@
 %{
 #include "libs/structures.h"
 #include "parser.tab.h"
+// #include "libs/ast.c"
 #include <stdio.h>
+
 %}
 
 %option yylineno
@@ -43,10 +45,10 @@ ID              [a-zA-Z_][a-zA-Z0-9_]*
 "not"                       {printf("%s\n", yytext); return TOK_LOG_NOT;}
 "++"                        {printf("%s\n", yytext); return TOK_INCR;}
 {ID}                        {printf("%s\n", yytext); strcpy(yylval.id, yytext); return TOK_ID;}
-{INT_NUMBER}                {printf("%s\n", yytext); yylval.var_val.type = INT; yylval.var_val.value.intValue = atoi(yytext); return TOK_INT_NUMBER;}
-{FLOAT_NUMBER}              {printf("%s\n", yytext); yylval.var_val.type = FLOAT; yylval.var_val.value.floatValue = atof(yytext); return TOK_FLOAT_NUMBER;}
-{STRING_VALUE}              {printf("%s\n", yytext); yylval.var_val.type = STRING; strcpy(yylval.var_val.value.strValue, yytext); return TOK_STRING_VALUE;}
-{CHAR_VALUE}                {printf("%s\n", yytext); yylval.var_val.type = CHAR; char str[3]; strcpy(str, yytext); yylval.var_val.value.charValue = str[1]; return TOK_CHAR_VALUE;}
+{INT_NUMBER}                {printf("%s\n", yytext); yylval.Var_Value.type = INT; yylval.Var_Value.value.intValue = atoi(yytext); return TOK_INT_NUMBER;}
+{FLOAT_NUMBER}              {printf("%s\n", yytext); yylval.Var_Value.type = FLOAT; yylval.Var_Value.value.floatValue = atof(yytext); return TOK_FLOAT_NUMBER;}
+{STRING_VALUE}              {printf("%s\n", yytext); yylval.Var_Value.type = STRING; strcpy(yylval.Var_Value.value.strValue, yytext); return TOK_STRING_VALUE;}
+{CHAR_VALUE}                {printf("%s\n", yytext); yylval.Var_Value.type = CHAR; char str[3]; strcpy(str, yytext); yylval.Var_Value.value.charValue = str[1]; return TOK_CHAR_VALUE;}
 ";"                         {printf("%s\n", yytext); return TOK_SEMI;}
 [ \t\v\n\f\r]+              {}
 \/\/.*                      {}
