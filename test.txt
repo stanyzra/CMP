@@ -81,4 +81,20 @@ main()::int {
     // testando classes
     class_instance1::Test_Class1 = Test_Class1();
     class_instance2::Test_Class2 = Test_Class2();
+
+    // testando chamada de funções
+    ret_proc1::int = procedure_test1();
+    ret_proc2::int = procedure_test2(3, "teste", float_test);
+    ret_proc3::int = procedure_test3();
+
+    // testando print
+    print(ret_proc1);
+    print(procedure_test2(3, "teste", float_test));
+    print(procedure_test3());
+
+    // testando input
+    user_input1::int = input("Informe um número inteiro: ");
+    user_input2::float = input("Informe um número float: ");
+    user_input3::string = input("Informe uma string: ");
+    user_input4::char = input("Informe um char: ");
 }

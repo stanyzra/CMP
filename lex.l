@@ -27,6 +27,7 @@ ID              [a-zA-Z_][a-zA-Z0-9_]*
 "main"                      {printf("%s\n", yytext); return TOK_MAIN;}
 "return"                    {printf("%s\n", yytext); return TOK_RET;}
 "class"                     {printf("%s\n", yytext); return TOK_CLASS;}
+"input"                     {printf("%s\n", yytext); return TOK_INPUT;}
 "import"                    {printf("%s\n", yytext); return TOK_IMPORT;}
 ":"                         {printf("%s\n", yytext); return TOK_COLON;}
 "::"                        {printf("%s\n", yytext); return TOK_DOUBLE_COLON;}

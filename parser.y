@@ -27,7 +27,7 @@ struct symbol_table *variables = NULL; /* important! initialize to NULL */
 %token TOK_WHILE TOK_PROC TOK_RET TOK_CLASS TOK_COLON TOK_LT TOK_GT
 %token TOK_LET TOK_GET TOK_EQ TOK_DIF TOK_ATTR TOK_IF TOK_ELSE TOK_MAIN
 %token TOK_LOG_AND TOK_LOG_OR TOK_LOG_NOT TOK_DOUBLE_COLON TOK_INCR
-%token TOK_IMPORT
+%token TOK_IMPORT TOK_INPUT
 %token '(' ')' '{' '}' '[' ']' ':' '+' '-' '*' '/'
 
 %left '+' '-'
@@ -50,15 +50,15 @@ import_command:
 imports:
     | imports import_command
 
-arguments:
+arguments_declaration:
     | TOK_ID TOK_DOUBLE_COLON primitive_type
     | TOK_ID TOK_DOUBLE_COLON class_type
-    | TOK_ID TOK_DOUBLE_COLON primitive_type ',' arguments
-    | TOK_ID TOK_DOUBLE_COLON class_type ',' arguments
+    | TOK_ID TOK_DOUBLE_COLON primitive_type ',' arguments_declaration
+    | TOK_ID TOK_DOUBLE_COLON class_type ',' arguments_declaration
     ;
 
 procedure:
-    TOK_PROC TOK_ID '(' arguments ')' TOK_DOUBLE_COLON primitive_type '{' statement TOK_RET procedure_return TOK_SEMI '}'
+    TOK_PROC TOK_ID '(' arguments_declaration ')' TOK_DOUBLE_COLON primitive_type '{' statement TOK_RET procedure_return TOK_SEMI '}'
     ;
 
 procedure_return:
@@ -85,9 +85,19 @@ classes:
 statement:
     | declaration statement
     | becomes statement
-    | TOK_PRINT '(' expr ')' TOK_SEMI
+    | print_command statement
     | if_command statement
     | while_command statement
+    ;
+
+print_command:
+      TOK_PRINT '(' expr ')' TOK_SEMI
+    | TOK_PRINT '(' boolean_expr ')' TOK_SEMI
+    | TOK_PRINT '(' procedure_call ')' TOK_SEMI
+    ;
+
+input_call:
+      TOK_INPUT '(' expr ')'
     ;
 
 class_type:
@@ -103,8 +113,17 @@ declaration:
 becomes:
       TOK_ATTR expr TOK_SEMI
     | TOK_ATTR '[' array_elements ']' TOK_SEMI
-    | TOK_ATTR TOK_ID '(' ')' TOK_SEMI
+    | TOK_ATTR procedure_call TOK_SEMI
+    | TOK_ATTR input_call TOK_SEMI
     ;
+
+procedure_call:
+      TOK_ID '(' arguments ')'
+    ;
+
+arguments:
+    | expr
+    | expr ',' arguments
 
 array_elements:
     | expr
