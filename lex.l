@@ -15,20 +15,41 @@ ID              [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
 
-"int"                       { return TOK_INT;}
-"float"                     { return TOK_FLOAT;}
-"char"                      { return TOK_CHAR;}
-"string"                    { return TOK_STRING;}
-"print"                     { return TOK_PRINT;}
-{ID}                        { strcpy(yylval.id, yytext); return TOK_ID;}
-{INT_NUMBER}                { yylval.var_val.type = INT; yylval.var_val.value.intValue = atoi(yytext); return TOK_INT_NUMBER;}
-{FLOAT_NUMBER}              { yylval.var_val.type = FLOAT; yylval.var_val.value.floatValue = atof(yytext); return TOK_FLOAT_NUMBER;}
-{STRING_VALUE}              { yylval.var_val.type = STRING; strcpy(yylval.var_val.value.strValue, yytext); return TOK_STRING_VALUE;}
-{CHAR_VALUE}                {yylval.var_val.type = CHAR; char str[3]; strcpy(str, yytext); yylval.var_val.value.charValue = str[1]; return TOK_CHAR_VALUE;}
-";"                         { return TOK_SEMI;}
-[ \t]+                      {}
+"int"                       {printf("%s\n", yytext); return TOK_INT;}
+"float"                     {printf("%s\n", yytext); return TOK_FLOAT;}
+"char"                      {printf("%s\n", yytext); return TOK_CHAR;}
+"string"                    {printf("%s\n", yytext); return TOK_STRING;}
+"print"                     {printf("%s\n", yytext); return TOK_PRINT;}
+"if"                        {printf("%s\n", yytext); return TOK_IF;}
+"else"                      {printf("%s\n", yytext); return TOK_ELSE;}
+"while"                     {printf("%s\n", yytext); return TOK_WHILE;}
+"proc"                      {printf("%s\n", yytext); return TOK_PROC;}
+"main"                      {printf("%s\n", yytext); return TOK_MAIN;}
+"return"                    {printf("%s\n", yytext); return TOK_RET;}
+"class"                     {printf("%s\n", yytext); return TOK_CLASS;}
+"import"                    {printf("%s\n", yytext); return TOK_IMPORT;}
+":"                         {printf("%s\n", yytext); return TOK_COLON;}
+"::"                        {printf("%s\n", yytext); return TOK_DOUBLE_COLON;}
+"<"                         {printf("%s\n", yytext); return TOK_LT;}
+">"                         {printf("%s\n", yytext); return TOK_GT;}
+"<="                        {printf("%s\n", yytext); return TOK_LET;}
+">="                        {printf("%s\n", yytext); return TOK_GET;}
+"=="                        {printf("%s\n", yytext); return TOK_EQ;}
+"!="                        {printf("%s\n", yytext); return TOK_DIF;}
+"="                         {printf("%s\n", yytext); return TOK_ATTR;}
+"&&"                        {printf("%s\n", yytext); return TOK_LOG_AND;}
+"||"                        {printf("%s\n", yytext); return TOK_LOG_OR;}
+"not"                       {printf("%s\n", yytext); return TOK_LOG_NOT;}
+"++"                        {printf("%s\n", yytext); return TOK_INCR;}
+{ID}                        {printf("%s\n", yytext); strcpy(yylval.id, yytext); return TOK_ID;}
+{INT_NUMBER}                {printf("%s\n", yytext); yylval.var_val.type = INT; yylval.var_val.value.intValue = atoi(yytext); return TOK_INT_NUMBER;}
+{FLOAT_NUMBER}              {printf("%s\n", yytext); yylval.var_val.type = FLOAT; yylval.var_val.value.floatValue = atof(yytext); return TOK_FLOAT_NUMBER;}
+{STRING_VALUE}              {printf("%s\n", yytext); yylval.var_val.type = STRING; strcpy(yylval.var_val.value.strValue, yytext); return TOK_STRING_VALUE;}
+{CHAR_VALUE}                {printf("%s\n", yytext); yylval.var_val.type = CHAR; char str[3]; strcpy(str, yytext); yylval.var_val.value.charValue = str[1]; return TOK_CHAR_VALUE;}
+";"                         {printf("%s\n", yytext); return TOK_SEMI;}
+[ \t\v\n\f\r]+              {}
 \/\/.*                      {}
 \/\*(\*(\/)|[^*])*\*\/      {}
-.                           { return yytext[0];}
+.                           {return yytext[0];}
 
 %%

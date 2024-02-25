@@ -1,0 +1,84 @@
+import "classes/class1.c"
+import "classes/class2.c"
+
+class Test_Class1 {
+    var_test_class1::int = 1;
+    var_test_class1::float = 1.0;
+    var_test_class1::string = "1";
+    var_test_class1::char = '1';
+ }
+
+class Test_Class2 {
+    var_test_class2::int = 2;
+    var_test_class2::float = 2.0;
+    var_test_class2::string = "2";
+    var_test_class2::char = '2';
+ }
+
+proc procedure_test1()::int {
+    proc_var1::int = 1;
+    proc_var2::string = "teste";
+
+    return proc_var1;
+}
+
+proc procedure_test2(proc_var1::int, proc_var2::string, proc_var3::float)::int {
+    proc_var1::int = 1;
+    proc_var2::string = "teste";
+
+    return (1 + 5) / 3;
+}
+
+proc procedure_test3()::int {
+    proc_var1::int = 1;
+    proc_var2::int = 3;
+
+    return proc_var1 == proc_var2;
+}
+
+main()::int {
+    // testando atribuições
+    int_test::int = 3;
+    float_test::float = 1.4;
+    string_test::string = "string de teste";
+    char_test::char = 't';
+    
+    // testando if normal
+    if (int_test > 2 && char_test < 'a' || int_test >= 3) {
+        copy_val::int = int_test;
+    }
+
+    // testando not
+    if (not int_test >= 2 && not char_test <= 'a' || not int_test == 3) {
+        copy_val::int = int_test;
+    }
+
+    // testando precedência
+    if (not (int_test != 2 && char_test == 'a') || (not int_test < 3)) {
+        copy_val::int = int_test;
+    }
+
+    // testando else
+    if (not (int_test != 2 && char_test == 'a') || (not int_test < 3)) {
+        copy_val::int = int_test;
+    } else {
+        else_value::string = "depois do else";
+    } else if (not int_test < 3) {
+        else_value::string = "depois do else if";
+    }
+
+    // testando while
+    cont::int = 0;
+    while (cont < 3) {
+        cont++;
+    }
+
+    // testando arrays
+    vector_test1::int = [1, 2, 3];
+    vector_test2::int = [3.5, 4.3, 6.6, 1.2];
+    vector_test3::int = [];
+
+    // testando classes
+    class_instance1::Test_Class1 = Test_Class1();
+    class_instance2::Test_Class2 = Test_Class2();
+}

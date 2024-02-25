@@ -22,170 +22,164 @@ struct symbol_table *variables = NULL; /* important! initialize to NULL */
 %token <var_val> TOK_STRING_VALUE
 %token <var_val> TOK_CHAR_VALUE
 
-%type <var_val> expr
-
-%token TOK_INT TOK_FLOAT TOK_CHAR TOK_STRING TOK_SEMI TOK_PRINT
+%type <var_val> expr 
+%token TOK_INT TOK_FLOAT TOK_CHAR TOK_STRING TOK_SEMI TOK_PRINT 
+%token TOK_WHILE TOK_PROC TOK_RET TOK_CLASS TOK_COLON TOK_LT TOK_GT
+%token TOK_LET TOK_GET TOK_EQ TOK_DIF TOK_ATTR TOK_IF TOK_ELSE TOK_MAIN
+%token TOK_LOG_AND TOK_LOG_OR TOK_LOG_NOT TOK_DOUBLE_COLON TOK_INCR
+%token TOK_IMPORT
+%token '(' ')' '{' '}' '[' ']' ':' '+' '-' '*' '/'
 
 %left '+' '-'
 %left '*' '/'
+%left TOK_LOG_OR
+%left TOK_LOG_AND
+%right TOK_LOG_NOT
 %nonassoc MINUS_SIGNAL
 
 %%
 
 program:
-    | program statement
+      imports classes procedures main
+    ;
+
+import_command:
+      TOK_IMPORT expr
+    ;
+
+imports:
+    | imports import_command
+
+arguments:
+    | TOK_ID TOK_DOUBLE_COLON primitive_type
+    | TOK_ID TOK_DOUBLE_COLON class_type
+    | TOK_ID TOK_DOUBLE_COLON primitive_type ',' arguments
+    | TOK_ID TOK_DOUBLE_COLON class_type ',' arguments
+    ;
+
+procedure:
+    TOK_PROC TOK_ID '(' arguments ')' TOK_DOUBLE_COLON primitive_type '{' statement TOK_RET procedure_return TOK_SEMI '}'
+    ;
+
+procedure_return:
+      expr
+    | boolean_expr
+    ;
+
+procedures:
+    | procedure procedures
+    ;
+
+main:
+    TOK_MAIN '(' ')' TOK_DOUBLE_COLON TOK_INT '{' statement '}'
+    ;
+
+class_declaration:
+      TOK_CLASS TOK_ID '{' declaration statement '}'
+    ;
+
+classes:
+    | class_declaration classes
     ;
 
 statement:
-      expr TOK_SEMI
-    | type TOK_ID '=' expr TOK_SEMI         
-    {
-        if ($4.type == INT) {
-            int length = snprintf(NULL, 0, "%d", $4.value.intValue);
-            char int_to_str[length + 1];
-            sprintf(int_to_str, "%d", $4.value.intValue);
-            add_var($2, int_to_str, $4.type, &variables);
-        } else if ($4.type == FLOAT) {
-            int length = snprintf(NULL, 0, "%f", $4.value.floatValue);
-            char flt_to_str[length + 1];
-            sprintf(flt_to_str, "%f", $4.value.floatValue);
-            add_var($2, flt_to_str, $4.type, &variables);
-        } else if ($4.type == STRING) {
-            printf("Str value: %s", $4.value.strValue);
-            add_var($2, $4.value.strValue, $4.type, &variables);
-        } else if ($4.type == CHAR) {
-            char chr_to_str[2];
-            chr_to_str[0] = $4.value.charValue;
-            chr_to_str[1] = '\0';
-            add_var($2, chr_to_str, $4.type, &variables);
-        }
-    }
+    | declaration statement
+    | becomes statement
     | TOK_PRINT '(' expr ')' TOK_SEMI
-    {
-        if ($3.type == INT) {
-            printf("%d\n", $3.value.intValue);
-        } else if ($3.type == FLOAT) {
-            printf("%f\n", $3.value.floatValue);
-        } else if ($3.type == STRING) {
-            printf("%s\n", $3.value.strValue);
-        } else if ($3.type == CHAR) {
-            printf("%c\n", $3.value.charValue);
-        }
-    }
+    | if_command statement
+    | while_command statement
+    ;
+
+class_type:
+    TOK_ID
+    ;
+
+declaration:
+      TOK_ID TOK_DOUBLE_COLON primitive_type becomes
+    | TOK_ID TOK_DOUBLE_COLON class_type becomes
+    | increment
+    ;
+
+becomes:
+      TOK_ATTR expr TOK_SEMI
+    | TOK_ATTR '[' array_elements ']' TOK_SEMI
+    | TOK_ATTR TOK_ID '(' ')' TOK_SEMI
+    ;
+
+array_elements:
+    | expr
+    | expr ',' array_elements
     ;
 
 expr:
+      value
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    ;
+
+value:
       TOK_INT_NUMBER
     | TOK_FLOAT_NUMBER
     | TOK_STRING_VALUE
     | TOK_CHAR_VALUE
-    | TOK_ID 
-    {
-        struct Var_Value id;
-        struct symbol_table *s;
-        s = find_var($1, &variables);
-        id.type = s->type;
-        if (s->type == INT) {
-            id.value.intValue = s->value.intValue;
-        } else if (s->type == FLOAT) {
-            id.value.floatValue = s->value.floatValue;
-        } else if (s->type == STRING) {
-            strcpy(id.value.strValue, s->value.strValue);
-        } else if (s->type == CHAR) {
-            id.value.charValue = s->value.charValue;
-        }
-
-        $$ = id;
-    }
-    | expr '+' expr
-    {
-        if ($1.type == INT && $3.type == INT) {
-            $$.type = INT; 
-            $$.value.intValue = $1.value.intValue + $3.value.intValue; 
-        } else if ($1.type == FLOAT && $3.type == FLOAT) {
-            $$.type = FLOAT; 
-            $$.value.floatValue = $1.value.floatValue + $3.value.floatValue; 
-        }
-    }
-    | expr '-' expr
-    {
-        if ($1.type == INT && $3.type == INT) {
-            $$.type = INT; 
-            $$.value.intValue = $1.value.intValue - $3.value.intValue; 
-        } else if ($1.type == FLOAT && $3.type == FLOAT) {
-            $$.type = FLOAT; 
-            $$.value.floatValue = $1.value.floatValue - $3.value.floatValue; 
-        }
-    }
-    | expr '*' expr
-    {
-        if ($1.type == INT && $3.type == INT) {
-            $$.type = INT; 
-            $$.value.intValue = $1.value.intValue * $3.value.intValue; 
-        } else if ($1.type == FLOAT && $3.type == FLOAT) {
-            $$.type = FLOAT; 
-            $$.value.floatValue = $1.value.floatValue * $3.value.floatValue; 
-        }
-    }
-    | expr '/' expr
-    { 
-        if ($1.type == INT && $3.type == INT) {
-            if ($3.value.intValue == 0) {
-                yyerror("Error: can't divide by 0.");
-                YYERROR;
-            }
-            $$.type = INT; 
-            $$.value.intValue = $1.value.intValue / $3.value.intValue; 
-        } else if ($1.type == FLOAT && $3.type == FLOAT) {
-            if ($3.value.floatValue == 0) {
-                yyerror("Error: can't divide by 0.");
-                YYERROR;
-            }
-            $$.type = FLOAT; 
-            $$.value.floatValue = $1.value.floatValue / $3.value.floatValue; 
-        } 
-    }
-    | '(' expr ')' 
-    { 
-        if ($2.type == INT) {
-            $$.type = INT;
-            $$.value.intValue = $2.value.intValue; 
-        } else if ($2.type == FLOAT) {
-            $$.type = FLOAT; 
-            $$.value.floatValue = $2.value.floatValue; 
-        } 
-        // else {
-        //     yyerror("Error: can put this type in fact");
-        //     YYERROR;
-        // }
-    }
-    | '-' expr %prec MINUS_SIGNAL 
-    { 
-        if ($2.type == INT) {
-            $$.type == INT;
-            $$.value.intValue = - $2.value.intValue;
-        } else if ($2.type == FLOAT) {
-            $$.type == FLOAT;
-            $$.value.floatValue = - $2.value.floatValue;
-        } else {
-            yyerror("Error: wrong type argument to unary minus");
-            YYERROR;
-        }
-    }
+    | TOK_ID
+    | '(' expr ')'
+    | '-' expr %prec MINUS_SIGNAL
     ;
 
-type:
+primitive_type:
       TOK_INT
     | TOK_FLOAT   
     | TOK_STRING   
     | TOK_CHAR  
+    ;
+
+if_command:
+      TOK_IF '(' boolean_expr ')' '{' statement '}' else_options
+    ;
+
+else_options:
+    | TOK_ELSE '{' statement '}' else_options
+    | TOK_ELSE if_command
+    ;
+
+boolean_comparission:
+      expr logical_operator expr
+    ;
+
+boolean_expr:
+    | boolean_comparission
+    | TOK_LOG_NOT boolean_expr
+    | boolean_expr TOK_LOG_AND boolean_expr
+    | boolean_expr TOK_LOG_OR boolean_expr
+    | '(' boolean_expr ')'
+    ;
+
+logical_operator:
+      TOK_GT 
+    | TOK_GET
+    | TOK_LT 
+    | TOK_LET
+    | TOK_EQ 
+    | TOK_DIF
+    ;
+
+while_command:
+    TOK_WHILE '(' boolean_expr ')' '{' statement '}'
+    ;
+
+increment:
+    TOK_ID TOK_INCR TOK_SEMI
+    ;
 
 %%
 
 void yyerror(const char *s) {
 	extern int yylineno;    
 	extern char * yytext;   
-    printf("Erro: %s\nSímbolo: %s\nLinha: %d", s, yytext, yylineno);
+    printf("Error: %s for symbol '%s' on line %d", s, yytext, yylineno);
 }
 
 int main(int argc, char **argv) {
