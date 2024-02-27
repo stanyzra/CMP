@@ -2,12 +2,15 @@
 #define STRUCTURES_H
 
 #include "uthash.h"
+#include "utstack.h"
+#define BUFLEN 256
 
 enum DataType {
     INT,
     FLOAT,
     STRING,
     CHAR,
+    CLASS
 };
 
 struct Var_Value {
@@ -20,7 +23,7 @@ struct Var_Value {
     } value;
 };
 
-struct symbol_table {
+struct hash {
     char key[128];
     enum DataType type;
     union {
@@ -31,4 +34,10 @@ struct symbol_table {
     } value;
     UT_hash_handle hh; /* makes this structure hashable */
 };
+
+typedef struct stack {
+    char bname[BUFLEN];
+    struct stack *next;
+} stack;
+
 #endif

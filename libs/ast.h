@@ -48,7 +48,7 @@ struct while_command {
 
 struct declaration {
     int node_type;
-    char token_id[256];
+    char token_id[64];
 
     struct primitive_type *primitive_type;
     struct becomes *becomes;
@@ -67,7 +67,7 @@ struct imports {
 
 struct arguments_declaration {
     int node_type;
-    char token_id[256];
+    char token_id[64];
 
     struct primitive_type *primitive_type;
     struct class_type *class_type;
@@ -75,7 +75,7 @@ struct arguments_declaration {
 };
 
 struct procedure {
-    char token_id[256];
+    char token_id[64];
 
     struct arguments_declaration *arguments_declaration;
     struct primitive_type *primitive_type;
@@ -96,7 +96,7 @@ struct procedures {
 };
 
 struct class_declaration {
-    char token_id[256];
+    char token_id[64];
 
     struct declaration *declaration;
     struct statement *statement;
@@ -112,11 +112,11 @@ struct input_call {
 };
 
 struct class_type {
-    char token_id[256];
+    char token_id[64];
 };
 
 struct procedure_call {
-    char token_id[256];
+    char token_id[64];
 
     struct arguments *arguments;
 };
@@ -139,14 +139,19 @@ struct expr {
     int node_type;
 
     struct value *value;
-    struct expr *expr;
+    struct expr *expr_1;
+    struct expr *expr_2;
 };
 
 struct value {
     int node_type;
-    char token_id[256];
+    char token_id[64];
 
     struct expr *expr;
+    int int_value;
+    float float_value;
+    char string_value[256];
+    char char_value;
 };
 
 struct primitive_type {
@@ -168,7 +173,7 @@ struct boolean_comparission {
 
 struct boolean_expr {
     int node_type;
-    
+
     struct boolean_comparission *boolean_comparission;
     struct boolean_expr *boolean_expr;
 };
@@ -178,7 +183,7 @@ struct logical_operator {
 };
 
 struct increment {
-    char token_id[256];
+    char token_id[64];
 };
 
 struct main {
@@ -212,8 +217,8 @@ struct ast *new_class_type(char *token_id);
 struct ast *new_procedure_call(char *token_id, struct arguments *arguments);
 struct ast *new_arguments(int node_type, struct expr *expr, struct arguments *arguments);
 struct ast *new_array_elements(int node_type, struct expr *expr, struct array_elements *array_elements);
-struct ast *new_expr(int node_type, struct value *value, struct expr *expr);
-struct ast *new_value(int node_type, char *token_id, struct expr *expr);
+struct ast *new_expr(int node_type, struct value *value, struct expr *expr_1, struct expr *expr_2);
+struct ast *new_value(int node_type, char *token_id, struct expr *expr, int int_value, float float_value, char *str_value, char char_value);
 struct ast *new_primitive_type(int node_type);
 struct ast *new_else_options(int node_type, struct statement *statement, struct else_options *else_options, struct if_command *if_command);
 struct ast *new_boolean_comparission(struct expr *expr, struct logical_operator *logical_operator);

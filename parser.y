@@ -1,14 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "libs/utils.c"
 #include "libs/ast.c"
+// #include "libs/structures.h"
 
 int yylex(void);
 int yyparse(void);
 void yyerror(const char *s);
-
-struct symbol_table *variables = NULL; /* important! initialize to NULL */
 
 %}
 
@@ -103,7 +101,12 @@ struct symbol_table *variables = NULL; /* important! initialize to NULL */
 
 program:
       imports classes procedures main
-      { printf("TESTE PROGRAM \n"); create_tree((struct ast *)$1) ; create_tree((struct ast *)$2); create_tree((struct ast *)$3); create_tree((struct ast *)$4); }
+    { 
+        // traverse_imports($1);
+        // traverse_classes($2);
+        // traverse_prodecures($3);
+        // traverse_main($4);
+    }
     ;
 
 import_command:
@@ -112,10 +115,12 @@ import_command:
     ;
 
 imports:
-    | imports import_command 
-    { $$ = (struct imports *)new_imports($1, $2); }
+    { $$ = NULL; }
+    | import_command imports
+    { $$ = (struct imports *)new_imports($2, $1); }
 
 arguments_declaration:
+    { $$ = NULL; }
     | TOK_ID TOK_DOUBLE_COLON primitive_type
     { $$ = (struct arguments_declaration *)new_arguments_declaration(0, $1, $3, NULL, NULL); }
     | TOK_ID TOK_DOUBLE_COLON class_type
@@ -132,20 +137,21 @@ procedure:
     ;
 
 procedure_return:
-      expr
-      { $$ = (struct procedure_return *)new_procedure_return(0, $1, NULL); }
+    expr
+    { $$ = (struct procedure_return *)new_procedure_return(0, $1, NULL); }
     | boolean_expr
-      { $$ = (struct procedure_return *)new_procedure_return(0, NULL, $1); }
+    { $$ = (struct procedure_return *)new_procedure_return(0, NULL, $1); }
     ;
 
 procedures:
+    { $$ = NULL; }
     | procedure procedures
     { $$ = (struct procedures *)new_procedures($1, $2); }
     ;
 
 main:
       TOK_MAIN '(' ')' '{' statement '}'
-      {printf("TESTE MAIN \n");$$ = (struct main *)new_main($5); }
+      { $$ = (struct main *)new_main($5); }
     ;
 
 class_declaration:
@@ -154,14 +160,15 @@ class_declaration:
     ;
 
 classes:
+    { $$ = NULL; }
     | class_declaration classes
     { $$ = (struct classes *)new_classes($1, $2); }
     ;
 
 statement: 
-    { printf("STATMENT NULL\n"); $$ = NULL; }
+    { $$ = NULL; }
     | declaration statement
-    { printf("teste declaration statment\n"); $$ = (struct statement *)new_statement(0, $1, NULL, NULL, NULL, NULL); }
+    { $$ = (struct statement *)new_statement(0, $1, NULL, NULL, NULL, NULL); }
     | becomes statement
     { $$ = (struct statement *)new_statement(1, NULL, $1, NULL, NULL, NULL); }
     | print_command statement
@@ -198,17 +205,19 @@ declaration:
     { $$ = (struct declaration *)new_declaration(1, $1, NULL, $4, $3, NULL); }
     | increment
     { $$ = (struct declaration *)new_declaration(2, NULL, NULL, NULL, NULL, $1); }
+    | TOK_ID becomes
+    { $$ = (struct declaration *)new_declaration(3, $1, NULL, $2, NULL, NULL); }
     ;
 
 becomes:
       TOK_ATTR expr TOK_SEMI
-    {printf("TESTE-------------\n"); $$ = (struct becomes *)new_becomes(0, $2, NULL, NULL, NULL); }
+    { $$ = (struct becomes *)new_becomes(0, $2, NULL, NULL, NULL); }
     | TOK_ATTR '[' array_elements ']' TOK_SEMI
     { $$ = (struct becomes *)new_becomes(1, NULL, $3, NULL, NULL); }
     | TOK_ATTR procedure_call TOK_SEMI
     { $$ = (struct becomes *)new_becomes(2, NULL, NULL, $2, NULL); }
     | TOK_ATTR input_call TOK_SEMI
-    { printf("TESTE INPUT\n"); $$ = (struct becomes *)new_becomes(3, NULL, NULL, NULL, $2); }
+    { $$ = (struct becomes *)new_becomes(3, NULL, NULL, NULL, $2); }
     ;
 
 procedure_call:
@@ -217,12 +226,14 @@ procedure_call:
     ;
 
 arguments:
+    { $$ = NULL; }
     | expr
     { $$ = (struct arguments *)new_arguments(0, $1, NULL); }
     | expr ',' arguments
     { $$ = (struct arguments *)new_arguments(1, $1, $3); }
 
 array_elements:
+    { $$ = NULL; }
     | expr
     { $$ = (struct array_elements *)new_array_elements(0, $1, NULL); }
     | expr ',' array_elements
@@ -231,30 +242,30 @@ array_elements:
 
 expr:
       value
-    {printf("TESTE EXPR\n"); $$ = (struct expr *)new_expr(0, $1, NULL); }
+    { $$ = (struct expr *)new_expr(0, $1, NULL, NULL); }
     | expr '+' expr
-    {printf("TESTE EXPR\n"); $$ = (struct expr *)new_expr(1, NULL, $1); }
+    { $$ = (struct expr *)new_expr(1, NULL, $1, $3); }
     | expr '-' expr
-    {printf("TESTE EXPR\n"); $$ = (struct expr *)new_expr(2, NULL, $1); }
+    { $$ = (struct expr *)new_expr(2, NULL, $1, $3); }
     | expr '*' expr
-    {printf("TESTE EXPR\n"); $$ = (struct expr *)new_expr(3, NULL, $1); }
+    { $$ = (struct expr *)new_expr(3, NULL, $1, $3); }
     | expr '/' expr
-    {printf("TESTE EXPR\n"); $$ = (struct expr *)new_expr(4, NULL, $1); }
+    { $$ = (struct expr *)new_expr(4, NULL, $1, $3); }
     ;
 
 value:
       TOK_INT_NUMBER
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(0, NULL, NULL); }
+    { $$ = (struct value *)new_value(0, NULL, NULL, $1.value.intValue, 0, NULL, '\0'); }
     | TOK_FLOAT_NUMBER
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(1, NULL, NULL); }
+    { $$ = (struct value *)new_value(1, NULL, NULL, 0, $1.value.floatValue, NULL, '\0'); }
     | TOK_STRING_VALUE
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(2, NULL, NULL); }
+    { $$ = (struct value *)new_value(2, NULL, NULL, 0, 0, $1.value.strValue, '\0'); }
     | TOK_CHAR_VALUE
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(3, NULL, NULL); }
+    { $$ = (struct value *)new_value(3, NULL, NULL, 0, 0, NULL, $1.value.charValue); }
     | TOK_ID
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(4, $1, NULL); }
+    { $$ = (struct value *)new_value(4, $1, NULL, 0, 0, NULL, '\0'); }
     | '(' expr ')'
-    {printf("TESTE value\n"); $$ = (struct value *)new_value(5, NULL, $2); }
+    { $$ = (struct value *)new_value(5, NULL, $2, 0, 0, NULL, '\0'); }
     /* | '-' expr %prec MINUS_SIGNAL */
     ;
 
@@ -275,6 +286,7 @@ if_command:
     ;
 
 else_options:
+    { $$ = NULL; }
     | TOK_ELSE '{' statement '}' else_options
     { $$ = (struct else_options *)new_else_options(0, $3, $5, NULL); }
     | TOK_ELSE if_command
@@ -287,6 +299,7 @@ boolean_comparission:
     ;
 
 boolean_expr:
+    { $$ = NULL; }
     | boolean_comparission
     { $$ = (struct boolean_expr *)new_boolean_expr(0, $1, NULL); }
     | TOK_LOG_NOT boolean_expr
@@ -329,10 +342,11 @@ increment:
 void yyerror(const char *s) {
 	extern int yylineno;    
 	extern char * yytext;   
-    printf("Error: %s for symbol '%s' on line %d", s, yytext, yylineno);
+    printf("Error: %s for symbol '%s' on line %d\n", s, yytext, yylineno);
 }
 
 int main(int argc, char **argv) {
     yyparse();
+    check_stack();
     return 0;
 }

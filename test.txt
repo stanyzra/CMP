@@ -3,7 +3,7 @@
 
 class Test_Class1 {
     var_test_class1::int = 1;
-    var_test_class1::float = 1.0;
+    var_test_class1::float = "String teste";
     var_test_class1::string = "1";
     var_test_class1::char = '1';
  }
@@ -38,15 +38,20 @@ proc procedure_test3()::int {
 
 main() {
     // testando atribuições
+    undefined_var = 3;
     int_test::int = 3;
     int_test2::int = -3;
     float_test::float = 1.4;
     string_test::string = "string de teste";
     char_test::char = 't';
+
+    // reatribuição
+    int_test = 5;
+    int_test2 = "erro";
     
     // testando if normal
     if (int_test > 2 && char_test < 'a' || int_test >= 3) {
-        copy_val::int = int_test;
+        copy_val::int = int_tests;
     }
 
     // testando not
@@ -69,9 +74,12 @@ main() {
     }
 
     // testando while
-    cont::int = 0;
+    cont1::int = 0;
+    cont2::char = '0';
     while (cont < 3) {
-        cont++;
+        cont1++;
+        cont2++;
+        cont3++;
     }
 
     // testando arrays
@@ -82,11 +90,14 @@ main() {
     // testando classes
     class_instance1::Test_Class1 = Test_Class1();
     class_instance2::Test_Class2 = Test_Class2();
+    class_instance3::Test_Class2 = Test_Class3();
 
     // testando chamada de funções
     ret_proc1::int = procedure_test1();
     ret_proc2::int = procedure_test2(3, "teste", float_test);
     ret_proc3::int = procedure_test3();
+    ret_proc4::int = procedure_test4aa();
+    ret_proc4::float = procedure_test3();
 
     // testando print
     print(ret_proc1);

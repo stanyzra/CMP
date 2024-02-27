@@ -31,9 +31,9 @@ int main() {
         return 1;
     }
 
-    add_var(var_name, var_value_str, var_type, &variables);
+    add_element(var_name, var_value_str, var_type, &variables);
 
-    s = find_var(var_name, &variables);
+    s = find_element(var_name, &variables);
     free(var_name);
     free(var_type_str);
     free(var_value_str);
