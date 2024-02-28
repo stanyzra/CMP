@@ -1,0 +1,20 @@
+// import "classes/class1.txt"
+// import "classes/class2.txt"
+
+class Test_Class1 {
+    var_test_class1::int = 1;
+    var_test_class2::string = "String teste";
+    var_test_class3::string = "1";
+    var_test_class4::char = '1';
+}
+
+
+main() {
+    // teste::int = 1;
+    if (2 > 3) {
+        teste::int = 1;
+    } else {
+        teste::int = 3;
+        //teste1::int = 2;
+    }
+}

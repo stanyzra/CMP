@@ -25,6 +25,7 @@ struct Var_Value {
 
 struct hash {
     char key[128];
+    char *scope;
     enum DataType type;
     union {
         int intValue;

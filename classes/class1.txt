@@ -1,0 +1,13 @@
+class Test_Class_From_File_1 {
+    var_test_class1::int = 1;
+    var_test_class2::float = "String teste";
+    var_test_class3::string = "1";
+    var_test_class4::char = '1';
+ }
+
+class Test_Class_From_File_2 {
+    var_test_class1::int = 1;
+    var_test_class2::float = "String teste";
+    var_test_class3::string = "1";
+    var_test_class4::char = '1';
+ }

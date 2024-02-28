@@ -1,5 +1,5 @@
-// import "classes/class1.c"
-// import "classes/class2.c"
+// import "classes/class1.txt"
+// import "classes/class2.txt"
 
 class Test_Class1 {
     var_test_class1::int = 1;
